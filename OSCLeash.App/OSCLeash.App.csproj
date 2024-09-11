@@ -23,7 +23,6 @@
     <PropertyGroup>
       <Description>Daemon for taking OSC Leash OSC messages and turning them into Avatar manipulation.</Description>
       <Copyright>Puplications</Copyright>
-      <Version>0.1.0</Version>
       <PackageLicenseExpression>MIT</PackageLicenseExpression>
       <PublishRepositoryUrl>true</PublishRepositoryUrl>
     </PropertyGroup>
@@ -53,6 +52,10 @@
         <PackageReference Include="Microsoft.Extensions.Hosting" />
         <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" />
         <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" />
+        <PackageReference Include="MinVer">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="OscQueryLibrary" />
         <PackageReference Include="OswaldTechnologies.Extensions.Hosting.WindowsFormsLifetime" />
         <PackageReference Include="Serilog.Extensions.Logging" />
@@ -60,6 +63,7 @@
         <PackageReference Include="Serilog.Sinks.Debug" />
         <PackageReference Include="Serilog.Sinks.File" />
         <PackageReference Include="System.Reactive" />
+        <PackageReference Include="System.Text.Json" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,0 +1,29 @@
+name: Release
+on:
+  push:
+    tags:
+      - '**'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+  
+      - name: Install .NET 9.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+          dotnet-quality: 'preview'
+          
+      - name: Build, Tests, Cover, Pack and Publish (on push tag)
+        shell: bash
+        if: github.event_name == 'push'
+        run: |
+          dotnet tool install --global dotnet-releaser
+          dotnet-releaser run --github-token "${{github.token}}" dotnet-releaser.toml
+    
