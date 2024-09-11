@@ -1,0 +1,97 @@
+﻿@page "/settings"
+@using Blazored.FluentValidation
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.Extensions.Logging
+@using OSCLeash.App.Services
+
+@inject SettingsService settingService
+@inject ILogger<Settings> logger
+@inject IToastService toastService
+
+<h3>Settings</h3>
+
+<FluentEditForm Model="Model" OnValidSubmit="Submit" FormName="SettingsForm">
+    <DataAnnotationsValidator />
+    <FluentValidationValidator DisableAssemblyScanning="@true" />
+    <FluentValidationSummary />
+
+    <FluentStack Wrap HorizontalGap="20" VerticalGap="10" VerticalAlignment="VerticalAlignment.Center">
+        <div>
+            <FluentTextField @bind-Value="WalkDeadzone" Label="Walking Deadzone" Id="walkingDeadzone" InputMode="InputMode.Numeric"></FluentTextField>
+            <FluentTooltip Anchor="walkingDeadzone">
+                The stretch value at which you will start &quot;walking&quot; forward.
+            </FluentTooltip>
+        </div>
+        <div>
+            <FluentTextField @bind-Value="RunDeadzone" Label="Running Deadzone" Id="runningDeadzone" InputMode="InputMode.Numeric"></FluentTextField>
+            <FluentTooltip Anchor="runningDeadzone">
+                The stretch value at which you will start &quot;running&quot; forward.
+            </FluentTooltip>
+        </div>
+        <div>
+            <FluentTextField @bind-Value="StrengthMultiplier" Label="Strength Multiplier" Id="strengthMultiplier" InputMode="InputMode.Numeric"></FluentTextField>
+            <FluentTooltip Anchor="strengthMultiplier">
+                Multiplied by the stretch value (see deadzone values) to get the move speed. This times your max leash stretch (see Strech in Unity) should roughly equal 1. It's fine if it goes over 1, and you can also have this times your Running Deadzone equal run to run max speed as soon as you run.
+            </FluentTooltip>
+        </div>
+        <div>
+            <FluentCheckbox @bind-Value="Model!.TurningEnabled" Label="Turning Enabled" Id="turningEnabled"></FluentCheckbox>
+            <FluentTooltip Anchor="turningEnabled">
+                Whether or you can be turned by the leash pull.
+            </FluentTooltip>
+        </div>
+        <div>
+            <FluentTextField @bind-Value="TurningDeadzone" Label="Turning Deadzone" Id="turningDeadzone" InputMode="InputMode.Numeric"></FluentTextField>
+            <FluentTooltip Anchor="turningDeadzone">
+                The stretch value at which you will start turning if necessary.
+            </FluentTooltip>
+        </div>
+        <div>
+            <FluentNumberField @bind-Value="Model!.TurningGoal" Label="Turning Goal" Id="turningGoal"></FluentNumberField>
+            <FluentTooltip Anchor="turningGoal">
+                The angle away from your front at which to start turning.
+            </FluentTooltip>
+
+        </div>
+        <div>
+            <FluentTextField @bind-Value="Model!.IP" Label="IP Address" Placeholder="127.0.0.1"></FluentTextField>
+        </div>
+    </FluentStack>
+    <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Submit</FluentButton>
+</FluentEditForm> 
+
+@code {
+    [SupplyParameterFromForm]
+    private OSCLeash.App.Settings? Model { get; set; }
+
+    string WalkDeadzone
+    {
+        get { return Model!.WalkDeadzone.ToString("F2"); }
+        set { Model!.WalkDeadzone = float.Parse(value); }
+    }
+    string RunDeadzone
+    {
+        get { return Model!.RunDeadzone.ToString("F2"); }
+        set { Model!.RunDeadzone = float.Parse(value); }
+    }
+    string StrengthMultiplier
+    {
+        get { return Model!.StrengthMultiplier.ToString("F2");  }
+        set { Model!.StrengthMultiplier = float.Parse(value); }
+    }
+    string TurningDeadzone
+    {
+        get { return Model!.TurningDeadzone.ToString("F2"); }
+        set { Model!.TurningDeadzone = float.Parse(value); }
+    }
+
+    protected override void OnInitialized() =>
+        Model ??= settingService.Value;
+
+    private async Task Submit()
+    {
+        settingService.Value = Model!;
+        settingService.Save();
+        toastService.ShowSuccess("Saved Settings.", timeout: 4000);
+    }
+}

@@ -1,0 +1,20 @@
+# configuration file for dotnet-releaser
+profile = "custom"
+
+[msbuild]
+project = "oscleash.sln"
+
+[msbuild.properties]
+PublishTrimmed = false
+PublishReadyToRun = false
+
+[github]
+user = "richicoder1"
+repo = "oscleash"
+
+[nuget]
+publish = false
+
+[[pack]]
+rid = ["win-x64", "win-arm64"]
+kinds = ["zip"]

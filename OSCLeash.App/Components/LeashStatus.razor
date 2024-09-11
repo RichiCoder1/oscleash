@@ -1,0 +1,74 @@
+﻿@using Microsoft.Extensions.Logging
+@using OSCLeash.App.Services
+@using OSCLeash.App.Services.Leash
+
+@implements IDisposable
+@inject OSCServer server
+@inject StatusService statusService
+@inject ILogger<LeashStatus> logger
+
+<h3 class="leash-header">Active Leashes</h3>
+
+@if (server.LeashData.IsEmpty)
+{
+    <p>No Leashes on the current Avatar.</p>
+    <p>If you're expecting a Leash, make sure that it's properly added and active on the current avatar, and all parameters are named correctly.</p>
+}
+else
+{
+    <p><b>Active Leash:</b> @ActiveLeash</p>
+    <FluentProgress Value="@((int) Math.Round((moveSpeed * 100.0f) / 2.0f))" />
+    <p class="move-speed">
+        Move Speed: @moveSpeed.ToString("F2")
+    </p>
+
+    <FluentDataGrid Items="@Leashes">
+        <TemplateColumn Title="Name" SortBy="@sortByName" Sortable="true">
+            @context.Name (@context.Direction)
+        </TemplateColumn>
+        <PropertyColumn Property="@(p => p.IsGrabbed)" Sortable="true" />
+        <PropertyColumn Property="@(p => p.Stretch)" Format="F2" Sortable="true" />
+    </FluentDataGrid>
+}
+
+@code {
+    bool isActive = false;
+    bool isWalking = false;
+    float moveSpeed = 0.0f;
+
+
+    GridSort<Leash> sortByName = GridSort<Leash>
+        .ByAscending(p => p.Name);
+
+    string ActiveLeash
+    {
+        get
+        {
+            var grabbedLeash = server.LeashData.FirstOrDefault(x => x.Value.IsGrabbed);
+            return grabbedLeash.Value is not default(Leash) ? grabbedLeash.Key : server.LeashData.FirstOrDefault().Key;
+        }
+    }
+
+    IQueryable<Leash> Leashes => server.LeashData.Values.AsQueryable();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        statusService.LeashUpdated += OnLeashUpdated;
+    }
+
+    private void OnLeashUpdated(object? sender, LeashUpdatedEventArgs e)
+    {
+        isActive = e.IsActive;
+        isWalking = e.IsWalking;
+        moveSpeed = e.Speed;
+
+        InvokeAsync(StateHasChanged).HandleBlazorError(logger);
+    }
+
+    public void Dispose()
+    {
+        statusService.LeashUpdated -= OnLeashUpdated;
+    }
+}

@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0-windows10.0.22621.0</TargetFramework>
+        <OutputType>WinExe</OutputType>
+        <UseWindowsForms>true</UseWindowsForms>
+
+        <!-- Project Options -->
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>OSCLeash.App</RootNamespace>
+        <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+        <ApplicationIcon>Resources\leash_icon.ico</ApplicationIcon>
+        <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
+
+        <PublishSingleFile>true</PublishSingleFile>
+        <SelfContained>true</SelfContained>
+        <Platforms>x64;ARM64</Platforms>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <Description>Daemon for taking OSC Leash OSC messages and turning them into Avatar manipulation.</Description>
+      <Copyright>Puplications</Copyright>
+      <Version>0.1.0</Version>
+      <PackageLicenseExpression>MIT</PackageLicenseExpression>
+      <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Content Remove="Resources\config.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Remove="Directory.Packages.props" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="Resources\leash_icon.ico" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="Resources\config.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Blazored.FluentValidation" />
+        <PackageReference Include="FluentResults" />
+        <PackageReference Include="LucHeart.CoreOSC" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebView.WindowsForms" />
+        <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" />
+        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" />
+        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" />
+        <PackageReference Include="OscQueryLibrary" />
+        <PackageReference Include="OswaldTechnologies.Extensions.Hosting.WindowsFormsLifetime" />
+        <PackageReference Include="Serilog.Extensions.Logging" />
+        <PackageReference Include="Serilog.Formatting.Compact" />
+        <PackageReference Include="Serilog.Sinks.Debug" />
+        <PackageReference Include="Serilog.Sinks.File" />
+        <PackageReference Include="System.Reactive" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Update="wwwroot\css\app.css">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Update="wwwroot\index.html">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,53 @@
+﻿@page "/"
+@implements IDisposable
+@using Microsoft.Extensions.Logging
+@using OSCLeash.App.Services
+@using OSCLeash.App.Services.Leash
+@using OSCLeash.App.Components
+
+@inject OSCServer server
+@inject StatusService statusService
+@inject ILogger<LeashStatus> logger
+
+<div class="home-container">
+    @if (isConnected)
+    {
+        <FluentMessageBar Intent="@MessageIntent.Success" AllowDismiss="false">
+            VRChat is connected at @serverAddress!
+        </FluentMessageBar>
+        
+        <LeashStatus />
+    }
+    else
+    {
+        <FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">
+            VRChat is not currently connected. Make sure the VRChat client is running and OSC is enabled.
+        </FluentMessageBar>
+    }
+</div>
+
+@code {
+
+    bool isConnected;
+    string serverAddress = "Not connected";
+
+    protected override void OnInitialized()
+    {
+        statusService.VrcClientChanged += OnVrcClientChanged;
+
+        isConnected = server.IsVrcConnected;
+        serverAddress = server.VrcIpAddress;
+    }
+
+    private void OnVrcClientChanged(object? sender, VrcChangedEventArgs e)
+    {
+        isConnected = e.Connected;
+        serverAddress = e.IpAddress?.ToString() ?? "Unknown";
+        InvokeAsync(StateHasChanged).HandleBlazorError(logger);
+    }
+
+    public void Dispose()
+    {
+        statusService.VrcClientChanged -= OnVrcClientChanged;
+    }
+}
